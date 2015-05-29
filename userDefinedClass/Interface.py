@@ -1,9 +1,5 @@
 __author__ = 'pilagod'
 import operator
-import collections
-from tkinter import *
-from tkinter import filedialog
-from tkinter import messagebox
 from xlwt import *
 from xlrd import *
 from userDefinedClass.Student import *
@@ -11,6 +7,7 @@ from userDefinedClass.School import *
 from userDefinedClass.TextColors import *
 from tkinter import *
 from tkinter import filedialog
+from tkinter import messagebox
 
 class interface(Frame):
     def __init__(self, master=None):
@@ -85,16 +82,6 @@ class interface(Frame):
 
     def startPlacement(self):
 
-        # inputFile = self.inputLabel["text"]
-        #
-        # try:
-        #     input_book = open_workbook(inputFile)
-        #     grade_sheet = input_book.sheet_by_name("grade")
-        #     school_sheet = input_book.sheet_by_name("school")
-        # except:
-        #     messagebox.showerror("Error", "File Format Error")
-        #     return
-
         (grade_sheet, school_sheet) = self.__getSheets()
         if grade_sheet == None or school_sheet == None:
             return
@@ -102,88 +89,11 @@ class interface(Frame):
         students = getStudentData(grade_sheet)
         schools = getSchoolData(school_sheet)
 
-        # for key, student in students.items():
-        #         print(repr(student))
-
-        # for key, school_requirement in school_requirements.items():
-        #         print(repr(school_requirement))
-
+        # Start Placement
         placement_results = self.__doPlacement(students, schools)
 
-        # placement＿results = {}
-        # for student in (sorted(students.values(), key=operator.attrgetter('rank'))):
-        #     print("{0}\n".format(student.rank))
-        #     # print(student.wills)
-        #     for will in student.wills:
-        #         # input()
-        #         print("{0}, {1}".format(will, school_requirements[will].slots))
-        #         # print("({0}, {1}, {2})".format(student.level, school_requirements[will].level, requirementLevelTest(student.level, school_requirements[will].level)))
-        #         if requirementLevelTest(student.level, school_requirements[will].level) and \
-        #             requirementSlotTest(student.level, school_requirements[will].slots) and \
-        #             requirementGpaTest(student.gpa, school_requirements[will].gpa):
-        #
-        #             requirementToeflTest = requirementScoreTest(student.level, student.toefl, school_requirements[will].toefl)
-        #             requirementIeltsTest = requirementScoreTest(student.level, student.ielts, school_requirements[will].ielts)
-        #             requirementToeicTest = requirementScoreTest(student.level, student.toeic, school_requirements[will].toeic)
-        #
-        #             if (requirementToeflTest or requirementIeltsTest or requirementToeicTest) or \
-        #                 (((not requirementToeflTest) and (school_requirements[will].toefl[0] is None)) and
-        #                  ((not requirementIeltsTest) and (school_requirements[will].ielts[0] is None)) and
-        #                  ((not requirementToeicTest) and (school_requirements[will].toeic[0] is None))):
-        #                 placement＿results[student.serial_no] = {
-        #                     "Serial No": student.serial_no,
-        #                     "Student ID": student.student_id,
-        #                     "Student Level": student.level,
-        #                     "Name": student.name,
-        #                     "School": will
-        #                 }
-        #                 print(placement＿results[student.serial_no])
-        #                 print()
-        #                 if student.level in "Undergraduates" or school_requirements[will].slots[1] < 0:
-        #                     school_requirements[will].slots[0] -= 1
-        #                 elif student.level in "Masters" or "Graduates":
-        #                     school_requirements[will].slots[1] -= 1
-        #                 break
-        #         else:
-        #             continue
-
+        # Output Placement Result
         self.__outputPlacementResult(placement_results)
-
-
-        # outputDir = self.outputLabel["text"]
-        # output_book = Workbook(encoding='utf-8')
-        # output_book_result_sheet = output_book.add_sheet('result')
-        # col_names = ["Serial No", "Student ID", "Student Level", "Name", "School"]
-        #
-        # index = 0
-        # for col_name in col_names:
-        #     output_book_result_sheet.row(0).write(index, col_name)
-        #     index += 1
-        #
-        # # for key in next(iter (placement＿results.values())).keys():
-        # #     output_book_result_sheet.row(row_num).write(index, key)
-        # #     index += 1
-        #
-        # index = 0
-        # row_num = 1
-        #
-        # # print(students.values())
-        # # print(placement＿results.values())
-        # #
-        # # print(collections.OrderedDict(sorted(placement＿results.items())))
-        # for key, values in sorted(placement_results.items()):
-        #     print(values)
-        #     for col_name in col_names:
-        #         output_book_result_sheet.row(row_num).write(index, values[col_name])
-        #         index += 1
-        #     index = 0
-        #     row_num +=1
-        #
-        # if outputDir == "":
-        #     outputDir = "./"
-        #
-        # output_book.save(outputDir + 'result.xls')
-
 
     # Output: (grade_sheet, school_sheet)
     def __getSheets(self):

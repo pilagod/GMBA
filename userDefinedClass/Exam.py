@@ -1,6 +1,5 @@
 __author__ = 'pilagod'
 
-
 class EnglishExam:
 
     def __init__(self, total=0, listening=0, speaking=0, reading=0, writing=0):
