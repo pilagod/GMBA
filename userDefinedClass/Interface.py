@@ -156,7 +156,7 @@ class interface(Frame):
 
                         if schools[will].others != "":
                             pass_or_not = input(
-                                TextColors.WARNING + "【Serial No】{0.serial_no:0.0f} 【Name】{0.name}".format(student) + TextColors.BOLD + "\n" + \
+                                TextColors.WARNING + "【Serial No】{0.serial_no:0.0f} 【Student ID】{0.student_id} 【Name】{0.name}".format(student) + TextColors.BOLD + "\n" + \
                                 TextColors.FAIL + schools[will].others + "?(y/n):" + TextColors.ENDC
                             )
                             while pass_or_not not in (YES_OPTIONS + NO_OPTIONS):
@@ -234,7 +234,7 @@ class interface(Frame):
             outputDir = "./"
 
         try:
-            output_book.save(outputDir + 'result.xls')
+            output_book.save(outputDir + '/result.xls')
         except:
             messagebox.showerror("Error", "Saving Output File Error")
 
