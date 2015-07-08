@@ -135,7 +135,7 @@ class interface(Frame):
                 if requirementLevelTest(student.level, schools[will].level) and \
                         requirementSlotTest(student.level, schools[will].slots) and \
                         requirementGpaTest(student.gpa, schools[will].gpa) and \
-                        requirementExchangeTermTest(student.exchange_term, schools[will].exchange_term):
+                        requirementExchangeTermTest(student.level, student.exchange_term, schools[will].exchange_term):
 
                     requirementToeflTest = requirementScoreTest(student.level, student.toefl, schools[will].toefl)
                     requirementIeltsTest = requirementScoreTest(student.level, student.ielts, schools[will].ielts)

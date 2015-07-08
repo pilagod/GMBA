@@ -87,7 +87,12 @@ def getSchoolData(sheet):
         jlpt = getDataRelatedToLevel(jlpt, str(sheet.cell(row, col_name[caseAndSpaceIndif("Requirement: JLPT")]).value))
 
         # For Exchange Term
-        exchange = sheet.cell(row, col_name[caseAndSpaceIndif("Exchange term")]).value.split('/')
+        exchange = sheet.cell(row, col_name[caseAndSpaceIndif("Exchange term")]).value.replace(" ", "").split('/')
+        exchange[0] = exchange[0][exchange[0].find(':')+1:].split(',')
+        if len(exchange) > 1:
+            exchange[1] = exchange[1][exchange[1].find(':')+1:].split(',')
+
+        # print(exchange)
 
         # For Slots
         slots = [-1, -1]
@@ -194,12 +199,24 @@ def requirementSlotTest(student_level, requirement_slots):
     print("requirementSlotTest: (False, {0}, {1})".format(student_level, requirement_slots))
     return False
 
-def requirementExchangeTermTest(student_term, requirement_term):
-    if student_term[0] == '':
+def requirementExchangeTermTest(student_level, student_term, requirement_term):
+    if len(student_term[0]) < 1:
         return True
-    for term in student_term:
-        if term in requirement_term:
-            return True
+
+    if student_level == "Under":
+        for term in student_term:
+            if term in requirement_term[0]:
+                return True
+
+    if student_level == "Master" or "Graduate":
+        if requirement_term[1] and len(requirement_term[1]) > 0:
+            for term in student_term:
+                if term in requirement_term[1]:
+                    return True
+        else:
+            for term in student_term:
+                if term in requirement_term[0]:
+                    return True
 
     print("requirementExchangeTermTest: (False, {0}, {1})".format(student_term, requirement_term))
     return False
