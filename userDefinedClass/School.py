@@ -63,7 +63,7 @@ def getSchoolData(sheet):
     col_name = {}
     for col in range(sheet.ncols):
         col_name[caseAndSpaceIndif(sheet.cell(0, col).value)] = col
-        print(caseAndSpaceIndif(sheet.cell(0, col).value))
+        # print(caseAndSpaceIndif(sheet.cell(0, col).value))
 
     school_requirements = {}
     for row in range(1, sheet.nrows):
@@ -93,7 +93,7 @@ def getSchoolData(sheet):
         slots = [-1, -1]
         getDataRelatedToLevel(slots, str(sheet.cell(row, col_name[caseAndSpaceIndif("Slots")]).value))
 
-        school_requirements[sheet.cell(row, col_name[caseAndSpaceIndif("School Code")]).value.lower().rstrip()] = SchoolRequirement(
+        school_requirements[caseAndSpaceIndif(sheet.cell(row, col_name[caseAndSpaceIndif("School Code")]).value)] = SchoolRequirement(
             sheet.cell(row, col_name[caseAndSpaceIndif("School Code")]).value,
             sheet.cell(row, col_name[caseAndSpaceIndif("Country")]).value,
             sheet.cell(row, col_name[caseAndSpaceIndif("School Name")]).value,
@@ -111,7 +111,6 @@ def getSchoolData(sheet):
             sheet.cell(row, col_name[caseAndSpaceIndif("Requirement: Others")]).value
         )
 
-    print(school_requirements)
     return school_requirements
 
 
@@ -143,12 +142,12 @@ def requirementScoreTest(student_level, student_score, requirement_scores):
     if requirement_scores[0] == None:
         return False
 
-    if student_level in "Undergraduates":
+    if student_level == "Under":
         # print("({0}, {1}, {2})".format(student_score >= requirement_scores[0], student_score, requirement_scores[0]))
         if student_score >= requirement_scores[0]:
             print("Pass {0} {1}".format(student_score, requirement_scores))
             return True
-    elif student_level in "Masters" or "Graduates":
+    elif student_level == "Master" or "Graduate":
         if requirement_scores[1] == None:
             if student_score >= requirement_scores[0]:
                 print("Pass {0} {1}".format(student_score, requirement_scores))
@@ -161,27 +160,27 @@ def requirementScoreTest(student_level, student_score, requirement_scores):
     print("requirementScoreTest({0}): (False, {1}, {2}, {3})".format(student_score.__class__.__name__, student_level, student_score, requirement_scores))
     return False
 
-def requirementJLPTScoreTest(student_level, student_score, requirement_scores):
-    if requirement_scores[0] < 0:
-        return False
-
-    if student_level in "Undergraduates":
-        # print("({0}, {1}, {2})".format(student_score >= requirement_scores[0], student_score, requirement_scores[0]))
-        if student_score >= requirement_scores[0]:
-            print("Pass {0} {1}".format(student_score, requirement_scores))
-            return True
-    elif student_level in "Masters" or "Graduates":
-        if requirement_scores[1] < 0:
-            if student_score >= requirement_scores[0]:
-                print("Pass {0} {1}".format(student_score, requirement_scores))
-                return True
-        else:
-            if student_score >= requirement_scores[1]:
-                print("Pass {0} {1}".format(student_score, requirement_scores))
-                return True
-
-    print("requirementScoreTest(JLPT): (False, {0}, {1}, {2})".format(student_level, student_score, requirement_scores))
-    return False
+# def requirementJLPTScoreTest(student_level, student_score, requirement_scores):
+#     if requirement_scores[0] < 0:
+#         return False
+#
+#     if student_level in "Undergraduates":
+#         # print("({0}, {1}, {2})".format(student_score >= requirement_scores[0], student_score, requirement_scores[0]))
+#         if student_score >= requirement_scores[0]:
+#             print("Pass {0} {1}".format(student_score, requirement_scores))
+#             return True
+#     elif student_level in "Masters" or "Graduates":
+#         if requirement_scores[1] < 0:
+#             if student_score >= requirement_scores[0]:
+#                 print("Pass {0} {1}".format(student_score, requirement_scores))
+#                 return True
+#         else:
+#             if student_score >= requirement_scores[1]:
+#                 print("Pass {0} {1}".format(student_score, requirement_scores))
+#                 return True
+#
+#     print("requirementScoreTest(JLPT): (False, {0}, {1}, {2})".format(student_level, student_score, requirement_scores))
+#     return False
 
 
 def requirementSlotTest(student_level, requirement_slots):
@@ -193,4 +192,14 @@ def requirementSlotTest(student_level, requirement_slots):
             return True
 
     print("requirementSlotTest: (False, {0}, {1})".format(student_level, requirement_slots))
+    return False
+
+def requirementExchangeTermTest(student_term, requirement_term):
+    if student_term[0] == '':
+        return True
+    for term in student_term:
+        if term in requirement_term:
+            return True
+
+    print("requirementExchangeTermTest: (False, {0}, {1})".format(student_term, requirement_term))
     return False

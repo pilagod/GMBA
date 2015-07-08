@@ -108,3 +108,36 @@ for student in (sorted(students.values(), key=operator.attrgetter('rank'))):
 
 print(placement_results)
 
+output_book = Workbook(encoding='utf-8')
+output_book_result_sheet = output_book.add_sheet('result')
+col_names = [
+    "Student ID", "Name", "Name(English)", "Date of Birth(MM/DD/YY)",
+    "Gender", "E-mail", "Cell Phone", "Level of Study", "Year of Study",
+    "Department", "Assigned School", "Assigned School(Chinese)", "Remark"
+]
+
+index = 0
+for col_name in col_names:
+    output_book_result_sheet.row(0).write(index, col_name)
+    index += 1
+
+# for key in next(iter (placement＿results.values())).keys():
+#     output_book_result_sheet.row(row_num).write(index, key)
+#     index += 1
+
+index = 0
+row_num = 1
+
+# print(students.values())
+# print(placement＿results.values())
+#
+# print(collections.OrderedDict(sorted(placement＿results.items())))
+for key, values in sorted(placement_results.items()):
+    print(values)
+    for col_name in col_names:
+        output_book_result_sheet.row(row_num).write(index, values[col_name])
+        index += 1
+    index = 0
+    row_num +=1
+
+output_book.save('./result.xls')

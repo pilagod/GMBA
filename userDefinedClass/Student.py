@@ -5,7 +5,7 @@ from .ShareFunc import *
 
 class Student:
     def __init__(self, serial_no, student_id, name, english_name, birth, gender, email, phone, department, level, study_year, rank, gpa,
-                 toefl=TOEFL(), ielts=IELTS(), remark="", wills=""):
+                 exchange_term, toefl=TOEFL(), ielts=IELTS(), remark="", wills=""):
         self.serial_no = serial_no
         self.student_id = student_id
         self.name = name
@@ -19,6 +19,7 @@ class Student:
         self.study_year = study_year
         self.rank = rank
         self.gpa = gpa
+        self.exchange_term = exchange_term
         self.toefl = toefl
         self.ielts = ielts
         # self.toeic = toeic
@@ -31,7 +32,7 @@ class Student:
                "{0.name}, {0.english_name}, {0.birth}, " \
                "{0.gender}, {0.email}, {0.phone}, " \
                "{0.department}, {0.level}, {0.study_year}, " \
-               "{0.rank}, {0.gpa}, {0.toefl}, {0.ielts}, " \
+               "{0.rank}, {0.gpa}, {0.exchange_term}, {0.toefl}, {0.ielts}, " \
                "{0.remark}, {0.wills})".format(self)
 
 
@@ -63,7 +64,7 @@ def getStudentData(sheet):
         # wills = sheet.cell(row, col_name['Wills']).value.split('/')
         wills = []
         for i in range(1, 21):
-            will = sheet.cell(row, col_name[caseAndSpaceIndif('Will')+str(i)]).value
+            will = sheet.cell(row, col_name[caseAndSpaceIndif('Will') + str(i)]).value
             if not will:
                 break
             else:
@@ -84,6 +85,7 @@ def getStudentData(sheet):
             sheet.cell(row, col_name[caseAndSpaceIndif('Year of Study')]).value,
             sheet.cell(row, col_name[caseAndSpaceIndif('Rank')]).value,
             sheet.cell(row, col_name[caseAndSpaceIndif('GPA')]).value,
+            sheet.cell(row, col_name[caseAndSpaceIndif('Exchange Term')]).value.split('/'),
             toefl, # sheet.cell(row, col_name['TOEFL(T/L/S/R/W)']).value,
             ielts, # sheet.cell(row, col_name['IELTS(T/L/S/R/W)']).value,
             # toeic, # sheet.cell(row, col_name['TOEIC(T/L/R)']).value,
