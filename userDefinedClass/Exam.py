@@ -48,9 +48,23 @@ class EnglishExam:
     #   'scores':refer to a string of serial scores in format: T/L/S/R/W
     #
     def setScores(self, scores):
-        scores = scores.split('/')
+        if scores == '':
+            self.__init__(0.0, 0.0, 0.0, 0.0, 0.0)
+            return
+
+        scores = scores.split(',')
+
         if len(scores) == 5:
-            self.__init__(float(scores[0]), float(scores[1]), float(scores[2]), float(scores[3]), float(scores[4]))
+            try:
+                self.__init__(float(scores[0]), float(scores[1]), float(scores[2]), float(scores[3]), float(scores[4]))
+            except ValueError:
+                self.__init__(int(scores[0]), int(scores[1]), int(scores[2]), int(scores[3]), int(scores[4]))
+
+        elif len(scores) == 1:
+            try:
+                self.__init__(float(scores[0]), 0.0, 0.0, 0.0, 0.0)
+            except ValueError:
+                self.__init__(int(scores[0]), 0, 0, 0, 0)
 
     def __eq__(self, other):
         if isinstance(other, EnglishExam):
@@ -105,9 +119,23 @@ class TOEIC(EnglishExam):
     #   'scores':refer to a string of serial scores in format: T/L/R
     #
     def setScores(self, scores):
-        scores = scores.split('/')
+        if scores == '':
+            self.__init__(0, 0, 0)
+            return
+
+        scores = scores.split(',')
+
         if len(scores) == 3:
-            self.__init__(float(scores[0]), float(scores[1]), float(scores[2]))
+            try:
+                self.__init__(int(scores[0]), int(scores[1]), int(scores[2]))
+            except ValueError:
+                self.__init__(float(scores[0]), float(scores[1]), float(scores[2]))
+
+        elif len(scores) == 1:
+            try:
+                self.__init__(int(scores[0]), 0, 0)
+            except ValueError:
+                self.__init__(float(scores[0]), 0, 0)
 
     def __le__(self, other):
         if isinstance(other, TOEIC):
