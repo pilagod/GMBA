@@ -1,6 +1,7 @@
 __author__ = 'pilagod'
 
 from .Exam import *
+from .ShareFunc import *
 
 class SchoolRequirement:
     def __init__(self, school_code, country, school_name, school_name_chinese, level, exchange_term, slots,
@@ -29,8 +30,10 @@ class SchoolRequirement:
                 "{0.english_taught}, {0.others}, {0.exchange_term}, " \
                 "{0.slots})".format(self)
 
+
+
 def getDataRelatedToLevel(result, data):
-    data_string = data.replace(" ", "").split(';')
+    data_string = data.replace(" ", "").split('/')
     if isinstance(result[0], EnglishExam):
         if len(data_string) > 1 :
             result[0].setScores(data_string[0][data_string[0].find(':')+1:])
@@ -59,51 +62,56 @@ def getDataRelatedToLevel(result, data):
 def getSchoolData(sheet):
     col_name = {}
     for col in range(sheet.ncols):
-        col_name[sheet.cell(0, col).value] = col
+        col_name[caseAndSpaceIndif(sheet.cell(0, col).value)] = col
+        print(caseAndSpaceIndif(sheet.cell(0, col).value))
 
     school_requirements = {}
     for row in range(1, sheet.nrows):
         # print(sheet.cell(row, col_name["School Code"]).value)
-        level = sheet.cell(row, col_name["Requirement: Under / Grad"]).value.replace(" ", "").split('/')
+        level = sheet.cell(row, col_name[caseAndSpaceIndif("Requirement: Under / Grad")]).value.replace(" ", "").split('/')
 
         # For TOEFL
         toefl = [TOEFL(), TOEFL()]
-        toefl = getDataRelatedToLevel(toefl, sheet.cell(row, col_name["Requirement: TOEFL"]).value)
+        toefl = getDataRelatedToLevel(toefl, sheet.cell(row, col_name[caseAndSpaceIndif("Requirement: TOEFL(T,L,S,R,W)")]).value)
 
         # For IELTS
         ielts = [IELTS(), IELTS()]
-        ielts = getDataRelatedToLevel(ielts, sheet.cell(row, col_name["Requirement: IELTS"]).value)
+        ielts = getDataRelatedToLevel(ielts, sheet.cell(row, col_name[caseAndSpaceIndif("Requirement: IELTS(T,L,S,R,W)")]).value)
 
         # For TOEIC
         toeic = [TOEIC(), TOEIC()]
-        toeic = getDataRelatedToLevel(toeic, sheet.cell(row, col_name["Requirement: TOEIC"]).value)
+        toeic = getDataRelatedToLevel(toeic, sheet.cell(row, col_name[caseAndSpaceIndif("Requirement: TOEIC(T,L,R)")]).value)
 
         # For JLPT
         jlpt = [-1, -1]
-        jlpt = getDataRelatedToLevel(jlpt, str(sheet.cell(row, col_name["Requirement: JLPT"]).value))
+        jlpt = getDataRelatedToLevel(jlpt, str(sheet.cell(row, col_name[caseAndSpaceIndif("Requirement: JLPT")]).value))
+
+        # For Exchange Term
+        exchange = sheet.cell(row, col_name[caseAndSpaceIndif("Exchange term")]).value.split('/')
 
         # For Slots
         slots = [-1, -1]
-        getDataRelatedToLevel(slots, str(sheet.cell(row, col_name["Slots"]).value))
+        getDataRelatedToLevel(slots, str(sheet.cell(row, col_name[caseAndSpaceIndif("Slots")]).value))
 
-        school_requirements[sheet.cell(row, col_name["School Code"]).value] = SchoolRequirement(
-            sheet.cell(row, col_name["School Code"]).value,
-            sheet.cell(row, col_name["Country"]).value,
-            sheet.cell(row, col_name["School Name"]).value,
-            sheet.cell(row, col_name["School Name(Chinese)"]).value,
+        school_requirements[sheet.cell(row, col_name[caseAndSpaceIndif("School Code")]).value.lower().rstrip()] = SchoolRequirement(
+            sheet.cell(row, col_name[caseAndSpaceIndif("School Code")]).value,
+            sheet.cell(row, col_name[caseAndSpaceIndif("Country")]).value,
+            sheet.cell(row, col_name[caseAndSpaceIndif("School Name")]).value,
+            sheet.cell(row, col_name[caseAndSpaceIndif("School Name(Chinese)")]).value,
             level, # sheet.cell(row, col_name["Requirement: Under / Grad"]).value,
-            sheet.cell(row, col_name["Exchange term"]).value,
+            exchange, # sheet.cell(row, col_name[caseAndSpaceIndif("Exchange term")]).value,
             slots, # sheet.cell(row, col_name["Slots"]).value,
-            sheet.cell(row, col_name["Requirement: GPA"]).value if sheet.cell(row, col_name["Requirement: GPA"]).value != "" else None,
+            sheet.cell(row, col_name[caseAndSpaceIndif("Requirement: GPA")]).value if sheet.cell(row, col_name[caseAndSpaceIndif("Requirement: GPA")]).value != "" else None,
             toefl, # sheet.cell(row, col_name["Requirement: TOEFL"]).value,
             ielts, # sheet.cell(row, col_name["Requirement: IELTS"]).value,
             toeic, # sheet.cell(row, col_name["Requirement: TOEIC"]).value,
             jlpt, # sheet.cell(row, col_name["Requirement: JLPT"]).value,
-            sheet.cell(row, col_name["Requirement: Working Experience(years)"]).value,
-            sheet.cell(row, col_name["Requirement: English-taught program offered"]).value,
-            sheet.cell(row, col_name["Requirement: Others"]).value
+            sheet.cell(row, col_name[caseAndSpaceIndif("Requirement: Working Experience(years)")]).value,
+            sheet.cell(row, col_name[caseAndSpaceIndif("Requirement: English-taught program offered")]).value,
+            sheet.cell(row, col_name[caseAndSpaceIndif("Requirement: Others")]).value
         )
 
+    print(school_requirements)
     return school_requirements
 
 
@@ -112,13 +120,14 @@ def requirementLevelTest(student_level, requirement_levels):
         return True
 
     for requirement_level in requirement_levels:
-        if student_level in requirement_level:
+        if requirement_level == 'U' and student_level == "Under":
             return True
-        elif requirement_level == "Graduates":
-            if student_level in ["Master", "Graduate"]:
-                return True
+        elif requirement_level == 'G' and student_level in ["Master", "Graduate"]:
+            return True
+        elif requirement_level == 'M' and student_level == "Master":
+            return True
 
-    print("requirementLevelTest: (False, {0}, {1})\n".format(student_level, requirement_levels))
+    print("requirementLevelTest: (False, {0}, {1})".format(student_level, requirement_levels))
     return False
 
 def requirementGpaTest(student_gpa, requirement_gpa):
@@ -127,7 +136,7 @@ def requirementGpaTest(student_gpa, requirement_gpa):
     elif student_gpa >= requirement_gpa:
         return True
 
-    print("requireGpaTest: (False, {0}, {1})\n".format(student_gpa, requirement_gpa))
+    print("requireGpaTest: (False, {0}, {1})".format(student_gpa, requirement_gpa))
     return False
 
 def requirementScoreTest(student_level, student_score, requirement_scores):
@@ -149,7 +158,7 @@ def requirementScoreTest(student_level, student_score, requirement_scores):
                 print("Pass {0} {1}".format(student_score, requirement_scores))
                 return True
 
-    print("requirementScoreTest({0}): (False, {1}, {2}, {3})\n".format(student_score.__class__.__name__, student_level, student_score, requirement_scores))
+    print("requirementScoreTest({0}): (False, {1}, {2}, {3})".format(student_score.__class__.__name__, student_level, student_score, requirement_scores))
     return False
 
 def requirementJLPTScoreTest(student_level, student_score, requirement_scores):
@@ -171,17 +180,17 @@ def requirementJLPTScoreTest(student_level, student_score, requirement_scores):
                 print("Pass {0} {1}".format(student_score, requirement_scores))
                 return True
 
-    print("requirementScoreTest(JLPT): (False, {0}, {1}, {2})\n".format(student_level, student_score, requirement_scores))
+    print("requirementScoreTest(JLPT): (False, {0}, {1}, {2})".format(student_level, student_score, requirement_scores))
     return False
 
 
 def requirementSlotTest(student_level, requirement_slots):
-    if student_level in "Undergraduates" or requirement_slots[1] < 0:
+    if student_level == "Under" or requirement_slots[1] < 0:
         if requirement_slots[0] > 0:
             return True
-    elif student_level in "Masters" or "Graduates":
+    elif student_level == "Master" or "Graduate":
         if requirement_slots[1] > 0:
             return True
 
-    print("requirementSlotTest: (False, {0}, {1})\n".format(student_level, requirement_slots))
+    print("requirementSlotTest: (False, {0}, {1})".format(student_level, requirement_slots))
     return False
