@@ -209,7 +209,7 @@ def requirementExchangeTermTest(student_level, student_term, requirement_term):
                 return True
 
     if student_level == "Master" or "Graduate":
-        if requirement_term[1] and len(requirement_term[1]) > 0:
+        if len(requirement_term) > 1:
             for term in student_term:
                 if term in requirement_term[1]:
                     return True

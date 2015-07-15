@@ -85,7 +85,7 @@ def getStudentData(sheet):
             sheet.cell(row, col_name[caseAndSpaceIndif('Year of Study')]).value,
             sheet.cell(row, col_name[caseAndSpaceIndif('Rank')]).value,
             sheet.cell(row, col_name[caseAndSpaceIndif('GPA')]).value,
-            sheet.cell(row, col_name[caseAndSpaceIndif('Exchange Term')]).value.split('/'),
+            sheet.cell(row, col_name[caseAndSpaceIndif('Exchange Term')]).value.replace(" ", "").split(','),
             toefl, # sheet.cell(row, col_name['TOEFL(T/L/S/R/W)']).value,
             ielts, # sheet.cell(row, col_name['IELTS(T/L/S/R/W)']).value,
             # toeic, # sheet.cell(row, col_name['TOEIC(T/L/R)']).value,
