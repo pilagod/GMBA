@@ -81,11 +81,11 @@ def getStudentData(sheet):
             sheet.cell(row, col_name[caseAndSpaceIndif('E-mail')]).value,
             sheet.cell(row, col_name[caseAndSpaceIndif('Cell Phone')]).value,
             sheet.cell(row, col_name[caseAndSpaceIndif('Department')]).value,
-            sheet.cell(row, col_name[caseAndSpaceIndif('Level of Study')]).value.replace(" ", ""),
+            sheet.cell(row, col_name[caseAndSpaceIndif('Level of Study')]).value.replace(" ", "").lower(),
             sheet.cell(row, col_name[caseAndSpaceIndif('Year of Study')]).value,
             sheet.cell(row, col_name[caseAndSpaceIndif('Rank')]).value,
             sheet.cell(row, col_name[caseAndSpaceIndif('GPA')]).value,
-            sheet.cell(row, col_name[caseAndSpaceIndif('Exchange Term')]).value.replace(" ", "").split(','),
+            sheet.cell(row, col_name[caseAndSpaceIndif('Exchange Term')]).value.replace(" ", "").lower().split(','),
             toefl, # sheet.cell(row, col_name['TOEFL(T/L/S/R/W)']).value,
             ielts, # sheet.cell(row, col_name['IELTS(T/L/S/R/W)']).value,
             # toeic, # sheet.cell(row, col_name['TOEIC(T/L/R)']).value,
@@ -93,5 +93,7 @@ def getStudentData(sheet):
             sheet.cell(row, col_name[caseAndSpaceIndif('Remark')]).value,
             wills # sheet.cell(row, col_name['Wills']).value
         )
+
+    # print(students)
 
     return students
