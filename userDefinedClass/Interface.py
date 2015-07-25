@@ -190,9 +190,9 @@ class interface(Frame):
                         }
                         # print(placement＿results[student.serial_no])
                         print("Pass.\n")
-                        if student.level in "Undergraduates" or schools[will].slots[1] < 0:
+                        if student.level == "u" or schools[will].slots[1] < 0:
                             schools[will].slots[0] -= 1
-                        elif student.level in "Masters" or "Graduates":
+                        elif student.level == "g":
                             schools[will].slots[1] -= 1
                         break
                     else:
