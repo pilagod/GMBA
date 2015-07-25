@@ -128,7 +128,8 @@ def requirementLevelTest(student_level, requirement_levels):
     for requirement_level in requirement_levels:
         if requirement_level == 'U' and student_level == "Under":
             return True
-        elif requirement_level == 'G' and student_level == "Master" or "Graduate":
+        elif requirement_level == 'G' and student_level in ["Master", "Graduate"]:
+            print("requirementLevelTest", student_level)
             return True
         elif requirement_level == 'M' and student_level == "Master":
             return True
@@ -168,7 +169,7 @@ def requirementScoreTest(student_level, student_score, requirement_scores):
         if student_score >= requirement_scores[0]:
             print("Pass {0} {1}".format(student_score, requirement_scores))
             return True
-    elif student_level == "Graduate":
+    elif student_level in ["Master", "Graduate"]:
         if requirement_scores[1] == None:
             if student_score >= requirement_scores[0]:
                 print("Pass {0} {1}".format(student_score, requirement_scores))
@@ -215,7 +216,7 @@ def requirementSlotTest(student_level, requirement_slots):
     if student_level == "Under" or requirement_slots[1] < 0:
         if requirement_slots[0] > 0:
             return True
-    elif student_level == "Master" or "Graduate":
+    elif student_level in ["Master", "Graduate"]:
         if requirement_slots[1] > 0:
             return True
 
@@ -246,7 +247,7 @@ def requirementExchangeTermTest(student_level, student_term, requirement_term):
             if term in requirement_term[0]:
                 return True
 
-    if student_level == "Master" or "Graduate":
+    if student_level in ["Master", "Graduate"]:
         # if requirement_term[1] and len(requirement_term[1]) > 0:
         if len(requirement_term) > 1:
             for term in student_term:
