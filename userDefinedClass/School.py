@@ -126,9 +126,11 @@ def requirementLevelTest(student_level, requirement_levels):
     # if student_level in requirement_levels:
     #     return True
     for requirement_level in requirement_levels:
-        if requirement_level == 'u' and student_level == "u":
+        if requirement_level in Level.Under.value \
+            and student_level in Level.Under.value:
             return True
-        elif requirement_level == 'g' and student_level == "g":
+        elif requirement_level in Level.Graduate.value\
+            and student_level in Level.Graduate.value:
             return True
 
     print("requirementLevelTest: (False, {0}, {1})".format(student_level, requirement_levels))
@@ -161,12 +163,12 @@ def requirementScoreTest(student_level, student_score, requirement_scores):
     #             print("Pass {0} {1}".format(student_score, requirement_scores))
     #             return True
 
-    if student_level == "u":
+    if student_level in Level.Under.value:
         # print("({0}, {1}, {2})".format(student_score >= requirement_scores[0], student_score, requirement_scores[0]))
         if student_score >= requirement_scores[0]:
             print("Pass {0} {1}".format(student_score, requirement_scores))
             return True
-    elif student_level == "g":
+    elif student_level in Level.Graduate.value:
         if requirement_scores[1] == None:
             if student_score >= requirement_scores[0]:
                 print("Pass {0} {1}".format(student_score, requirement_scores))
@@ -210,10 +212,10 @@ def requirementSlotTest(student_level, requirement_slots):
     #     if requirement_slots[1] > 0:
     #         return True
 
-    if student_level == "u" or requirement_slots[1] < 0:
+    if student_level in Level.Under.value or requirement_slots[1] < 0:
         if requirement_slots[0] > 0:
             return True
-    elif student_level == "g":
+    elif student_level in Level.Graduate.value:
         if requirement_slots[1] > 0:
             return True
 
@@ -239,12 +241,12 @@ def requirementExchangeTermTest(student_level, student_term, requirement_term):
     #             if term in requirement_term[0]:
     #                 return True
 
-    if student_level == "u":
+    if student_level in Level.Under.value:
         for term in student_term:
             if term in requirement_term[0]:
                 return True
 
-    if student_level == "g":
+    if student_level in Level.Graduate.value:
         if len(requirement_term) > 1:
             for term in student_term:
                 if term in requirement_term[1]:
