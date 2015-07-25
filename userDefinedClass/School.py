@@ -87,7 +87,7 @@ def getSchoolData(sheet):
         jlpt = getDataRelatedToLevel(jlpt, str(sheet.cell(row, col_name[caseAndSpaceIndif("Requirement: JLPT")]).value))
 
         # For Exchange Term
-        exchange = sheet.cell(row, col_name[caseAndSpaceIndif("Exchange term")]).value.replace(" ", "").split('/')
+        exchange = sheet.cell(row, col_name[caseAndSpaceIndif("Exchange term")]).value.replace(" ", "").lower().split('/')
         exchange[0] = exchange[0][exchange[0].find(':')+1:].split(',')
         if len(exchange) > 1:
             exchange[1] = exchange[1][exchange[1].find(':')+1:].split(',')
@@ -123,10 +123,12 @@ def requirementLevelTest(student_level, requirement_levels):
     if requirement_levels[0] == '':
         return True
 
+    # if student_level in requirement_levels:
+    #     return True
     for requirement_level in requirement_levels:
         if requirement_level == 'U' and student_level == "Under":
             return True
-        elif requirement_level == 'G' and student_level in ["Master", "Graduate"]:
+        elif requirement_level == 'G' and student_level == "Master" or "Graduate":
             return True
         elif requirement_level == 'M' and student_level == "Master":
             return True
@@ -147,12 +149,26 @@ def requirementScoreTest(student_level, student_score, requirement_scores):
     if requirement_scores[0] == None:
         return False
 
+    # if student_level in Level.Under.value:
+    #     if student_score >= requirement_scores[0]:
+    #         print("Pass {0} {1}".format(student_score, requirement_scores))
+    #         return True
+    # elif student_level in Level.Graduate.value:
+    #     if requirement_scores[1] == None:
+    #         if student_score >= requirement_scores[0]:
+    #             print("Pass {0} {1}".format(student_score, requirement_scores))
+    #             return True
+    #     else:
+    #         if student_score >= requirement_scores[1]:
+    #             print("Pass {0} {1}".format(student_score, requirement_scores))
+    #             return True
+
     if student_level == "Under":
         # print("({0}, {1}, {2})".format(student_score >= requirement_scores[0], student_score, requirement_scores[0]))
         if student_score >= requirement_scores[0]:
             print("Pass {0} {1}".format(student_score, requirement_scores))
             return True
-    elif student_level == "Master" or "Graduate":
+    elif student_level == "Graduate":
         if requirement_scores[1] == None:
             if student_score >= requirement_scores[0]:
                 print("Pass {0} {1}".format(student_score, requirement_scores))
@@ -189,6 +205,13 @@ def requirementScoreTest(student_level, student_score, requirement_scores):
 
 
 def requirementSlotTest(student_level, requirement_slots):
+    # if student_level in Level.Under.value or requirement_slots[1] < 0:
+    #     if requirement_slots[0] > 0:
+    #         return True
+    # elif student_level in Level.Graduate.value:
+    #     if requirement_slots[1] > 0:
+    #         return True
+
     if student_level == "Under" or requirement_slots[1] < 0:
         if requirement_slots[0] > 0:
             return True
@@ -202,6 +225,21 @@ def requirementSlotTest(student_level, requirement_slots):
 def requirementExchangeTermTest(student_level, student_term, requirement_term):
     if len(student_term[0]) < 1:
         return True
+
+    # if student_level in Level.Under.value:
+    #     for term in student_term:
+    #         if term in requirement_term[0]:
+    #             return True
+    #
+    # if student_level in Level.Graduate.value:
+    #     if len(requirement_term) > 1:
+    #         for term in student_term:
+    #             if term in requirement_term[1]:
+    #                 return True
+    #     else:
+    #         for term in student_term:
+    #             if term in requirement_term[0]:
+    #                 return True
 
     if student_level == "Under":
         for term in student_term:
