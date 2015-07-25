@@ -171,6 +171,22 @@ class interface(Frame):
                             if pass_or_not in NO_OPTIONS:
                                 continue
 
+                        if len(student.exchange_term) == 1 and student.exchange_term[0] != "":
+                            level = student.exchange_term[0]
+                        else:
+                            if (len(schools[will].exchange_term) == 1 or student.level in Level.Under.value) \
+                                and len(schools[will].exchange_term[0]) == 1:
+                                level = schools[will].exchange_term[0][0]
+                            elif student.level in Level.Graduate.value \
+                                and len(schools[will].exchange_term) > 1 \
+                                and len(schools[will].exchange_term[1]) == 1:
+                                level = schools[will].exchange_term[1][0]
+                            else:
+                                level = ""
+
+                        # print(len(student.exchange_term), len(schools[will].exchange_term), len(schools[will].exchange_term[0]))
+                        # print(student.exchange_term, schools[will].exchange_term, level)
+
                         placement_results[student.serial_no] = {
                             # "rank": student.rank,
                             # "level": student.level,
@@ -184,6 +200,7 @@ class interface(Frame):
                             "Level of Study": Level.Under.name if student.level in Level.Under.value else Level.Graduate.name,
                             "Year of Study": student.study_year,
                             "Department": student.department,
+                            "Exchange Term": level,
                             "Assigned School": schools[will].school_code,
                             "Assigned School(Chinese)": schools[will].school_name_chinese,
                             "Remark": ""
@@ -212,7 +229,7 @@ class interface(Frame):
         col_names = [
             "Student ID", "Name", "Name(English)", "Date of Birth(MM/DD/YY)",
             "Gender", "E-mail", "Cell Phone", "Level of Study", "Year of Study",
-            "Department", "Assigned School", "Assigned School(Chinese)", "Remark"
+            "Department", "Exchange Term", "Assigned School", "Assigned School(Chinese)", "Remark"
         ]
 
         index = 0
