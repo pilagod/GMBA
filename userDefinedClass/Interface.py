@@ -130,7 +130,7 @@ class interface(Frame):
 
             for will in student.wills:
                 will = caseAndSpaceIndif(will)
-                print(TextColors.OKBLUE + "School:{0}, Level:{1.level}, Exchange:{1.exchange_term}, Slots:{1.slots}, GPA:{1.gpa}, TOEFL:{1.toefl}, IELTS:{1.ielts}, TOEIC:{1.toeic}".format(will, schools[will]) + TextColors.ENDC)
+                print(TextColors.OKBLUE + "School:{0}, Level:{1.level}, Exchange:{1.exchange_term}, Slots:{1.slots}, GPA:{1.gpa}, TOEFL:{1.toefl}, IELTS:{1.ielts}".format(will, schools[will]) + TextColors.ENDC)
 
                 if requirementLevelTest(student.level, schools[will].level) and \
                         requirementSlotTest(student.level, schools[will].slots) and \

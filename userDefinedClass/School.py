@@ -5,7 +5,7 @@ from .ShareFunc import *
 
 class SchoolRequirement:
     def __init__(self, school_code, country, school_name, school_name_chinese, level, exchange_term, slots,
-                 gpa=[0, 0], toefl=[TOEFL(), TOEFL()], ielts=[IELTS(), IELTS()], toeic=[TOEIC(), TOEIC()], working_experience=0, english_taught="No", others=""):
+                 gpa=[0, 0], toefl=[TOEFL(), TOEFL()], ielts=[IELTS(), IELTS()], others=""):
         self.school_code = school_code
         self.country = country
         self.school_name = school_name
@@ -16,18 +16,17 @@ class SchoolRequirement:
         self.gpa = gpa
         self.toefl = toefl
         self.ielts = ielts
-        self.toeic = toeic
+        # self.toeic = toeic
         # self.jlpt = jlpt
-        self.working_experience = working_experience
-        self.english_taught = english_taught
+        # self.working_experience = working_experience
+        # self.english_taught = english_taught
         self.others = others
 
     def __repr__(self):
         return self.__class__.__name__ + "({0.school_code}, {0.country}, " \
                 "{0.school_name}, {0.school_name_chinese}, " \
                 "{0.level}, {0.gpa}, {0.toefl}, {0.ielts}, " \
-                "{0.toeic}, {0.working_experience}, " \
-                "{0.english_taught}, {0.others}, {0.exchange_term}, " \
+                "{0.others}, {0.exchange_term}, " \
                 "{0.slots})".format(self)
 
 
@@ -79,8 +78,8 @@ def getSchoolData(sheet):
         ielts = getDataRelatedToLevel(ielts, sheet.cell(row, col_name[caseAndSpaceIndif("Requirement: IELTS(T,L,S,R,W)")]).value)
 
         # For TOEIC
-        toeic = [TOEIC(), TOEIC()]
-        toeic = getDataRelatedToLevel(toeic, sheet.cell(row, col_name[caseAndSpaceIndif("Requirement: TOEIC(T,L,R)")]).value)
+        # toeic = [TOEIC(), TOEIC()]
+        # toeic = getDataRelatedToLevel(toeic, sheet.cell(row, col_name[caseAndSpaceIndif("Requirement: TOEIC(T,L,R)")]).value)
 
         # For JLPT
         # jlpt = [-1, -1]
@@ -109,10 +108,10 @@ def getSchoolData(sheet):
             sheet.cell(row, col_name[caseAndSpaceIndif("Requirement: GPA")]).value if sheet.cell(row, col_name[caseAndSpaceIndif("Requirement: GPA")]).value != "" else None,
             toefl, # sheet.cell(row, col_name["Requirement: TOEFL"]).value,
             ielts, # sheet.cell(row, col_name["Requirement: IELTS"]).value,
-            toeic, # sheet.cell(row, col_name["Requirement: TOEIC"]).value,
+            # toeic, # sheet.cell(row, col_name["Requirement: TOEIC"]).value,
             # jlpt, # sheet.cell(row, col_name["Requirement: JLPT"]).value,
-            sheet.cell(row, col_name[caseAndSpaceIndif("Requirement: Working Experience(years)")]).value,
-            sheet.cell(row, col_name[caseAndSpaceIndif("Requirement: English-taught program offered")]).value,
+            # sheet.cell(row, col_name[caseAndSpaceIndif("Requirement: Working Experience(years)")]).value,
+            # sheet.cell(row, col_name[caseAndSpaceIndif("Requirement: English-taught program offered")]).value,
             sheet.cell(row, col_name[caseAndSpaceIndif("Requirement: Others")]).value
         )
 
