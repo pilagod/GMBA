@@ -63,12 +63,17 @@ def getStudentData(sheet):
         # For Wills
         # wills = sheet.cell(row, col_name['Wills']).value.split('/')
         wills = []
-        for i in range(1, 21):
-            will = sheet.cell(row, col_name[caseAndSpaceIndif('Will') + str(i)]).value
-            if not will:
+        i = 1
+        while True:
+            try:
+                will = sheet.cell(row, col_name[caseAndSpaceIndif('Will') + str(i)]).value
+                if not will:
+                    break
+                else:
+                    wills.append(will)
+                    i += 1
+            except KeyError:
                 break
-            else:
-                wills.append(will)
 
         # Set Student Data
         students[sheet.cell(row, col_name[caseAndSpaceIndif('Serial No')]).value] = Student(
