@@ -5,7 +5,7 @@ from .ShareFunc import *
 
 class SchoolRequirement:
     def __init__(self, school_code, country, school_name, school_name_chinese, level, exchange_term, slots,
-                 gpa=[0, 0], toefl=[TOEFL(), TOEFL()], ielts=[IELTS(), IELTS()], toeic=[TOEIC(), TOEIC()], jlpt=[-1, -1], working_experience=0, english_taught="No", others=""):
+                 gpa=[0, 0], toefl=[TOEFL(), TOEFL()], ielts=[IELTS(), IELTS()], toeic=[TOEIC(), TOEIC()], working_experience=0, english_taught="No", others=""):
         self.school_code = school_code
         self.country = country
         self.school_name = school_name
@@ -17,7 +17,7 @@ class SchoolRequirement:
         self.toefl = toefl
         self.ielts = ielts
         self.toeic = toeic
-        self.jlpt = jlpt
+        # self.jlpt = jlpt
         self.working_experience = working_experience
         self.english_taught = english_taught
         self.others = others
@@ -26,7 +26,7 @@ class SchoolRequirement:
         return self.__class__.__name__ + "({0.school_code}, {0.country}, " \
                 "{0.school_name}, {0.school_name_chinese}, " \
                 "{0.level}, {0.gpa}, {0.toefl}, {0.ielts}, " \
-                "{0.toeic}, {0.jlpt}, {0.working_experience}, " \
+                "{0.toeic}, {0.working_experience}, " \
                 "{0.english_taught}, {0.others}, {0.exchange_term}, " \
                 "{0.slots})".format(self)
 
@@ -68,7 +68,7 @@ def getSchoolData(sheet):
     school_requirements = {}
     for row in range(1, sheet.nrows):
         # print(sheet.cell(row, col_name["School Code"]).value)
-        level = sheet.cell(row, col_name[caseAndSpaceIndif("Requirement: Under / Grad")]).value.replace(" ", "").split('/')
+        level = sheet.cell(row, col_name[caseAndSpaceIndif("Requirement: Under / Grad")]).value.replace(" ", "").lower().split('/')
 
         # For TOEFL
         toefl = [TOEFL(), TOEFL()]
@@ -83,8 +83,8 @@ def getSchoolData(sheet):
         toeic = getDataRelatedToLevel(toeic, sheet.cell(row, col_name[caseAndSpaceIndif("Requirement: TOEIC(T,L,R)")]).value)
 
         # For JLPT
-        jlpt = [-1, -1]
-        jlpt = getDataRelatedToLevel(jlpt, str(sheet.cell(row, col_name[caseAndSpaceIndif("Requirement: JLPT")]).value))
+        # jlpt = [-1, -1]
+        # jlpt = getDataRelatedToLevel(jlpt, str(sheet.cell(row, col_name[caseAndSpaceIndif("Requirement: JLPT")]).value))
 
         # For Exchange Term
         exchange = sheet.cell(row, col_name[caseAndSpaceIndif("Exchange term")]).value.replace(" ", "").lower().split('/')
@@ -110,7 +110,7 @@ def getSchoolData(sheet):
             toefl, # sheet.cell(row, col_name["Requirement: TOEFL"]).value,
             ielts, # sheet.cell(row, col_name["Requirement: IELTS"]).value,
             toeic, # sheet.cell(row, col_name["Requirement: TOEIC"]).value,
-            jlpt, # sheet.cell(row, col_name["Requirement: JLPT"]).value,
+            # jlpt, # sheet.cell(row, col_name["Requirement: JLPT"]).value,
             sheet.cell(row, col_name[caseAndSpaceIndif("Requirement: Working Experience(years)")]).value,
             sheet.cell(row, col_name[caseAndSpaceIndif("Requirement: English-taught program offered")]).value,
             sheet.cell(row, col_name[caseAndSpaceIndif("Requirement: Others")]).value
@@ -126,12 +126,11 @@ def requirementLevelTest(student_level, requirement_levels):
     # if student_level in requirement_levels:
     #     return True
     for requirement_level in requirement_levels:
-        if requirement_level == 'U' and student_level == "Under":
+        if requirement_level in Level.Under.value \
+            and student_level in Level.Under.value:
             return True
-        elif requirement_level == 'G' and student_level in ["Master", "Graduate"]:
-            print("requirementLevelTest", student_level)
-            return True
-        elif requirement_level == 'M' and student_level == "Master":
+        elif requirement_level in Level.Graduate.value\
+            and student_level in Level.Graduate.value:
             return True
 
     print("requirementLevelTest: (False, {0}, {1})".format(student_level, requirement_levels))
@@ -164,12 +163,13 @@ def requirementScoreTest(student_level, student_score, requirement_scores):
     #             print("Pass {0} {1}".format(student_score, requirement_scores))
     #             return True
 
-    if student_level == "Under":
+    if student_level in Level.Under.value:
         # print("({0}, {1}, {2})".format(student_score >= requirement_scores[0], student_score, requirement_scores[0]))
         if student_score >= requirement_scores[0]:
             print("Pass {0} {1}".format(student_score, requirement_scores))
             return True
-    elif student_level in ["Master", "Graduate"]:
+
+    elif student_level in Level.Graduate.value:
         if requirement_scores[1] == None:
             if student_score >= requirement_scores[0]:
                 print("Pass {0} {1}".format(student_score, requirement_scores))
@@ -213,10 +213,11 @@ def requirementSlotTest(student_level, requirement_slots):
     #     if requirement_slots[1] > 0:
     #         return True
 
-    if student_level == "Under" or requirement_slots[1] < 0:
+    if student_level in Level.Under.value or requirement_slots[1] < 0:
         if requirement_slots[0] > 0:
             return True
-    elif student_level in ["Master", "Graduate"]:
+
+    elif student_level in Level.Graduate.value:
         if requirement_slots[1] > 0:
             return True
 
@@ -242,13 +243,12 @@ def requirementExchangeTermTest(student_level, student_term, requirement_term):
     #             if term in requirement_term[0]:
     #                 return True
 
-    if student_level == "Under":
+    if student_level in Level.Under.value:
         for term in student_term:
             if term in requirement_term[0]:
                 return True
 
-    if student_level in ["Master", "Graduate"]:
-        # if requirement_term[1] and len(requirement_term[1]) > 0:
+    if student_level in Level.Graduate.value:
         if len(requirement_term) > 1:
             for term in student_term:
                 if term in requirement_term[1]:

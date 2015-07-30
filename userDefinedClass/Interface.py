@@ -130,7 +130,7 @@ class interface(Frame):
 
             for will in student.wills:
                 will = caseAndSpaceIndif(will)
-                print(TextColors.OKBLUE + "School:{0}, Level:{1.level}, Exchange:{1.exchange_term}, Slots:{1.slots}, GPA:{1.gpa}, TOEFL:{1.toefl}, IELTS:{1.ielts}, TOEIC:{1.toeic}, JLPT:{1.jlpt}".format(will, schools[will]) + TextColors.ENDC)
+                print(TextColors.OKBLUE + "School:{0}, Level:{1.level}, Exchange:{1.exchange_term}, Slots:{1.slots}, GPA:{1.gpa}, TOEFL:{1.toefl}, IELTS:{1.ielts}, TOEIC:{1.toeic}".format(will, schools[will]) + TextColors.ENDC)
 
                 if requirementLevelTest(student.level, schools[will].level) and \
                         requirementSlotTest(student.level, schools[will].slots) and \
@@ -171,6 +171,22 @@ class interface(Frame):
                             if pass_or_not in NO_OPTIONS:
                                 continue
 
+                        if len(student.exchange_term) == 1 and student.exchange_term[0] != "":
+                            level = student.exchange_term[0]
+                        else:
+                            if (len(schools[will].exchange_term) == 1 or student.level in Level.Under.value) \
+                                and len(schools[will].exchange_term[0]) == 1:
+                                level = schools[will].exchange_term[0][0]
+                            elif student.level in Level.Graduate.value \
+                                and len(schools[will].exchange_term) > 1 \
+                                and len(schools[will].exchange_term[1]) == 1:
+                                level = schools[will].exchange_term[1][0]
+                            else:
+                                level = ""
+
+                        # print(len(student.exchange_term), len(schools[will].exchange_term), len(schools[will].exchange_term[0]))
+                        # print(student.exchange_term, schools[will].exchange_term, level)
+
                         placement_results[student.serial_no] = {
                             # "rank": student.rank,
                             # "level": student.level,
@@ -181,18 +197,19 @@ class interface(Frame):
                             "Gender": student.gender,
                             "E-mail": student.email,
                             "Cell Phone": student.phone,
-                            "Level of Study": student.level,
+                            "Level of Study": Level.Under.name if student.level in Level.Under.value else Level.Graduate.name,
                             "Year of Study": student.study_year,
                             "Department": student.department,
+                            "Exchange Term": level,
                             "Assigned School": schools[will].school_code,
                             "Assigned School(Chinese)": schools[will].school_name_chinese,
                             "Remark": ""
                         }
                         # print(placement＿results[student.serial_no])
                         print("Pass.\n")
-                        if student.level in "Undergraduates" or schools[will].slots[1] < 0:
+                        if student.level in Level.Under.value or schools[will].slots[1] < 0:
                             schools[will].slots[0] -= 1
-                        elif student.level in "Masters" or "Graduates":
+                        elif student.level in Level.Graduate.value:
                             schools[will].slots[1] -= 1
                         break
                     else:
@@ -212,7 +229,7 @@ class interface(Frame):
         col_names = [
             "Student ID", "Name", "Name(English)", "Date of Birth(MM/DD/YY)",
             "Gender", "E-mail", "Cell Phone", "Level of Study", "Year of Study",
-            "Department", "Assigned School", "Assigned School(Chinese)", "Remark"
+            "Department", "Exchange Term", "Assigned School", "Assigned School(Chinese)", "Remark"
         ]
 
         index = 0
