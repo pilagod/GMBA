@@ -10,6 +10,7 @@ from tkinter import *
 from tkinter import filedialog
 from tkinter import messagebox
 
+
 class interface(Frame):
     def __init__(self, master=None):
         Frame.__init__(self, master)
@@ -71,7 +72,6 @@ class interface(Frame):
         self.startButton["command"] = self.startPlacement
         self.startButton.grid(row=3, column=2, columnspan=2)
 
-
     def chooseInputStudentFile(self):
         self.inputStudentLabel["text"] = filedialog.askopenfilename()
 
@@ -94,7 +94,7 @@ class interface(Frame):
         placement_results = self.__doPlacement(students, schools)
 
         # Output Placement Result
-        self.__outputPlacementResult(placement_results)
+        self.__outputPlacementResult(placement_results, schools)
 
     # Output: (grade_sheet, school_sheet)
     def __getSheets(self):
@@ -115,7 +115,6 @@ class interface(Frame):
 
         return (grade_sheet, school_sheet)
 
-
     # Output: placement_results
     def __doPlacement(self, students, schools):
 
@@ -126,11 +125,15 @@ class interface(Frame):
 
         for student in (sorted(students.values(), key=operator.attrgetter('rank'))):
 
-            print(TextColors.WARNING + "({0.rank:0.0f}) {0.name}, {0.level}, {0.exchange_term}, GPA({0.gpa}), {0.toefl}, {0.ielts}\n".format(student) + TextColors.BOLD)
+            print(
+                TextColors.WARNING + "({0.rank:0.0f}) {0.name}, {0.level}, {0.exchange_term}, GPA({0.gpa}), {0.toefl}, {0.ielts}\n".format(
+                    student) + TextColors.BOLD)
 
             for will in student.wills:
                 will = caseAndSpaceIndif(will)
-                print(TextColors.OKBLUE + "School:{0}, Level:{1.level}, Exchange:{1.exchange_term}, Slots:{1.slots}, GPA:{1.gpa}, TOEFL:{1.toefl}, IELTS:{1.ielts}".format(will, schools[will]) + TextColors.ENDC)
+                print(
+                    TextColors.OKBLUE + "School:{0}, Level:{1.level}, Exchange:{1.exchange_term}, Slots:{1.slots}, GPA:{1.gpa}, TOEFL:{1.toefl}, IELTS:{1.ielts}".format(
+                        will, schools[will]) + TextColors.ENDC)
 
                 if requirementLevelTest(student.level, schools[will].level) and \
                         requirementSlotTest(student.level, schools[will].slots) and \
@@ -154,8 +157,8 @@ class interface(Frame):
                     #               ((not requirementJLPTTest) and (schools[will].jlpt[0] <= -1)))
 
                     scoreTests = (requirementToeflTest or requirementIeltsTest) or \
-                         (((not requirementToeflTest) and (schools[will].toefl[0] is None)) and
-                          ((not requirementIeltsTest) and (schools[will].ielts[0] is None)))
+                                 (((not requirementToeflTest) and (schools[will].toefl[0] is None)) and
+                                  ((not requirementIeltsTest) and (schools[will].ielts[0] is None)))
 
                     if scoreTests or student.remark != "":
 
@@ -163,7 +166,8 @@ class interface(Frame):
 
                         if schools[will].others.rstrip() != "":
                             pass_or_not = input(
-                                TextColors.WARNING + "【Serial No】{0.serial_no:0.0f} 【Student ID】{0.student_id} 【Name】{0.name}".format(student) + TextColors.BOLD + "\n" + \
+                                TextColors.WARNING + "【Serial No】{0.serial_no:0.0f} 【Student ID】{0.student_id} 【Name】{0.name}".format(
+                                    student) + TextColors.BOLD + "\n" + \
                                 TextColors.FAIL + schools[will].others + "?(y/n):" + TextColors.ENDC
                             )
                             while pass_or_not not in (YES_OPTIONS + NO_OPTIONS):
@@ -175,11 +179,11 @@ class interface(Frame):
                             level = student.exchange_term[0]
                         else:
                             if (len(schools[will].exchange_term) == 1 or student.level in Level.Under.value) \
-                                and len(schools[will].exchange_term[0]) == 1:
+                                    and len(schools[will].exchange_term[0]) == 1:
                                 level = schools[will].exchange_term[0][0]
                             elif student.level in Level.Graduate.value \
-                                and len(schools[will].exchange_term) > 1 \
-                                and len(schools[will].exchange_term[1]) == 1:
+                                    and len(schools[will].exchange_term) > 1 \
+                                    and len(schools[will].exchange_term[1]) == 1:
                                 level = schools[will].exchange_term[1][0]
                             else:
                                 level = ""
@@ -221,10 +225,15 @@ class interface(Frame):
 
         return placement_results
 
-    def __outputPlacementResult(self, placement_results):
+    def __outputPlacementResult(self, placement_results, schools):
 
         outputDir = self.outputLabel["text"]
         output_book = Workbook(encoding='utf-8')
+
+        ###########################################
+        ###       Output Placement Results      ###
+        ###########################################
+
         output_book_result_sheet = output_book.add_sheet('result')
         col_names = [
             "Student ID", "Name", "Name(English)", "Date of Birth(MM/DD/YY)",
@@ -237,24 +246,59 @@ class interface(Frame):
             output_book_result_sheet.row(0).write(index, col_name)
             index += 1
 
-        # for key in next(iter (placement＿results.values())).keys():
-        #     output_book_result_sheet.row(row_num).write(index, key)
-        #     index += 1
+        index = 0
+        row_num = 1
+        for key, placement_result in sorted(placement_results.items()):
+            print(placement_result)
+            for col_name in col_names:
+                output_book_result_sheet.row(row_num).write(index, placement_result[col_name])
+                index += 1
+            index = 0
+            row_num += 1
+
+        ###########################################
+        ###    Output Remaining School' Slots   ###
+        ###########################################
+
+        output_book_school_sheet = output_book.add_sheet('school_remaining')
+        col_names = [
+            "School Code", "Country", "School Name", "School Name(Chinese)",
+            "Requirement: Under / Grad", "Under Slots", "Graduate Slots"
+        ]
+
+        index = 0
+        for col_name in col_names:
+            output_book_school_sheet.row(0).write(index, col_name)
+            index += 1
 
         index = 0
         row_num = 1
+        for school in sorted(schools.values(), key=lambda k: (-k.slots[0], -(k.slots[1]+1), k.country)):
+            # Write Data to school_remaining sheet
+            output_book_school_sheet.row(row_num).write(0, school.school_code)
+            output_book_school_sheet.row(row_num).write(1, school.country)
+            output_book_school_sheet.row(row_num).write(2, school.school_name)
+            output_book_school_sheet.row(row_num).write(3, school.school_name_chinese)
 
-        # print(students.values())
-        # print(placement＿results.values())
-        #
-        # print(collections.OrderedDict(sorted(placement＿results.items())))
-        for key, values in sorted(placement_results.items()):
-            print(values)
-            for col_name in col_names:
-                output_book_result_sheet.row(row_num).write(index, values[col_name])
-                index += 1
-            index = 0
-            row_num +=1
+            if len(school.level) > 1 or school.level[0] == '':
+                output_book_school_sheet.row(row_num).write(4, "U/G")
+                output_book_school_sheet.row(row_num).write(5, school.slots[0])
+                # output_book_school_sheet.row(row_num).write(6, '--------------------')
+            else:
+                if school.level[0] in ['U', 'u']:
+                    output_book_school_sheet.row(row_num).write(4, "U")
+                    output_book_school_sheet.row(row_num).write(5, school.slots[0])
+                    # output_book_school_sheet.row(row_num).write(6, 0)
+                elif school.level[0] in ['G', 'g']:
+                    output_book_school_sheet.row(row_num).write(4, "G")
+                    # output_book_school_sheet.row(row_num).write(5, 0)
+                    output_book_school_sheet.row(row_num).write(6, school.slots[0])
+
+            row_num += 1
+
+        ###########################################
+        ###         Save All Output Data        ###
+        ###########################################
 
         if outputDir == "":
             outputDir = "./"
@@ -266,7 +310,3 @@ class interface(Frame):
 
         messagebox.showinfo("Finish!", "Placement Finish!")
         self.quit()
-
-
-
-
