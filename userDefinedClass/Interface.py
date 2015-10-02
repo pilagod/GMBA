@@ -263,7 +263,7 @@ class interface(Frame):
         output_book_school_sheet = output_book.add_sheet('school_remaining')
         col_names = [
             "School Code", "Country", "School Name", "School Name(Chinese)",
-            "Requirement: Under / Grad", "Under Slots", "Graduate Slots"
+            "Requirement: Under / Grad", "U/G", "U", "G"
         ]
 
         index = 0
@@ -287,12 +287,12 @@ class interface(Frame):
             else:
                 if school.level[0] in ['U', 'u']:
                     output_book_school_sheet.row(row_num).write(4, "U")
-                    output_book_school_sheet.row(row_num).write(5, school.slots[0])
+                    output_book_school_sheet.row(row_num).write(6, school.slots[0])
                     # output_book_school_sheet.row(row_num).write(6, 0)
                 elif school.level[0] in ['G', 'g']:
                     output_book_school_sheet.row(row_num).write(4, "G")
                     # output_book_school_sheet.row(row_num).write(5, 0)
-                    output_book_school_sheet.row(row_num).write(6, school.slots[0])
+                    output_book_school_sheet.row(row_num).write(7, school.slots[0])
 
             row_num += 1
 
