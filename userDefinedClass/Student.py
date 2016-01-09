@@ -5,7 +5,7 @@ from .ShareFunc import *
 
 class Student:
     def __init__(self, serial_no, student_id, name, english_name, birth, gender, email, phone, department, level, study_year, rank, gpa,
-                 exchange_term, toefl=TOEFL(), ielts=IELTS(), remark="", wills=""):
+                 exchange_term, toefl=TOEFL(), ielts=IELTS(), other="", remark="", wills=""):
         self.serial_no = serial_no
         self.student_id = student_id
         self.name = name
@@ -24,6 +24,7 @@ class Student:
         self.ielts = ielts
         # self.toeic = toeic
         # self.jlpt = jlpt
+        self.other = other
         self.remark = remark
         self.wills = wills
 
@@ -95,6 +96,7 @@ def getStudentData(sheet):
             ielts, # sheet.cell(row, col_name['IELTS(T/L/S/R/W)']).value,
             # toeic, # sheet.cell(row, col_name['TOEIC(T/L/R)']).value,
             # jlpt, # sheet.cell(row, col_name['JLPT']).value,
+            str(sheet.cell(row, col_name[caseAndSpaceIndif('Other')]).value),
             sheet.cell(row, col_name[caseAndSpaceIndif('Remark')]).value,
             wills # sheet.cell(row, col_name['Wills']).value
         )

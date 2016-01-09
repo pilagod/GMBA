@@ -137,18 +137,13 @@ class interface(Frame):
 
                 if requirementLevelTest(student.level, schools[will].level) and \
                         requirementSlotTest(student.level, schools[will].slots) and \
-                        requirementGpaTest(student.gpa, schools[will].gpa) and \
-                        requirementExchangeTermTest(student.level, student.exchange_term, schools[will].exchange_term):
+                        requirementGpaTest(student.gpa, schools[will].gpa): # and \
+                        # requirementExchangeTermTest(student.level, student.exchange_term, schools[will].exchange_term):
 
                     requirementToeflTest = requirementScoreTest(student.level, student.toefl, schools[will].toefl)
                     requirementIeltsTest = requirementScoreTest(student.level, student.ielts, schools[will].ielts)
                     # requirementToeicTest = requirementScoreTest(student.level, student.toeic, schools[will].toeic)
                     # requirementJLPTTest = requirementJLPTScoreTest(student.level, student.jlpt, schools[will].jlpt)
-
-                    # print(requirementToeflTest)
-                    # print(requirementIeltsTest)
-                    # print(requirementToeicTest)
-                    # print(requirementJLPTTest)
 
                     # scoreTests = (requirementToeflTest or requirementIeltsTest or requirementToeicTest or requirementJLPTTest) or \
                     #              (((not requirementToeflTest) and (schools[will].toefl[0] is None)) and
@@ -156,37 +151,54 @@ class interface(Frame):
                     #               ((not requirementToeicTest) and (schools[will].toeic[0] is None)) and
                     #               ((not requirementJLPTTest) and (schools[will].jlpt[0] <= -1)))
 
+                    if (not (requirementToeflTest or requirementIeltsTest) and student.other != ""):
+                        score_pass_or_not = input(
+                            TextColors.WARNING + "【Serial No】{0.serial_no} 【Student ID】{0.student_id} 【Name】{0.name}, failed at score tests.".format(
+                                student) + TextColors.BOLD + "\n" + \
+                            TextColors.FAIL + "This student is " + student.other + ", should he pass score tests?(y/n):" + TextColors.ENDC
+                        )
+                        while score_pass_or_not not in (YES_OPTIONS + NO_OPTIONS):
+                            score_pass_or_not = input(TextColors.FAIL + "Enter 'y' or 'n'(y/n):" + TextColors.ENDC)
+
+                        if score_pass_or_not in YES_OPTIONS:
+                            requirementToeflTest = True
+                            requirementIeltsTest = True
+
                     scoreTests = (requirementToeflTest or requirementIeltsTest) or \
                                  (((not requirementToeflTest) and (schools[will].toefl[0] is None)) and
                                   ((not requirementIeltsTest) and (schools[will].ielts[0] is None)))
 
-                    if scoreTests or student.remark != "":
+                    if scoreTests:
 
                         print("Scores Test Pass.")
 
                         if schools[will].others.rstrip() != "":
                             pass_or_not = input(
-                                TextColors.WARNING + "【Serial No】{0.serial_no:0.0f} 【Student ID】{0.student_id} 【Name】{0.name}".format(
+                                TextColors.WARNING + "【Serial No】{0.serial_no} 【Student ID】{0.student_id} 【Name】{0.name}".format(
                                     student) + TextColors.BOLD + "\n" + \
                                 TextColors.FAIL + schools[will].others + "?(y/n):" + TextColors.ENDC
                             )
                             while pass_or_not not in (YES_OPTIONS + NO_OPTIONS):
                                 pass_or_not = input(TextColors.FAIL + "Enter 'y' or 'n'(y/n):" + TextColors.ENDC)
+
                             if pass_or_not in NO_OPTIONS:
                                 continue
 
-                        if len(student.exchange_term) == 1 and student.exchange_term[0] != "":
-                            level = student.exchange_term[0]
-                        else:
-                            if (len(schools[will].exchange_term) == 1 or student.level in Level.Under.value) \
-                                    and len(schools[will].exchange_term[0]) == 1:
-                                level = schools[will].exchange_term[0][0]
-                            elif student.level in Level.Graduate.value \
-                                    and len(schools[will].exchange_term) > 1 \
-                                    and len(schools[will].exchange_term[1]) == 1:
-                                level = schools[will].exchange_term[1][0]
-                            else:
-                                level = ""
+                        exchange_term = schools[will].exchange_term[0][0] if len(schools[will].exchange_term) == 1 \
+                                        else (schools[will].exchange_term[0][0] if student.level in Level.Under.value else schools[will].exchange_term[1][0])
+
+                        # if len(student.exchange_term) == 1 and student.exchange_term[0] != "":
+                        #     level = student.exchange_term[0]
+                        # else:
+                        #     if (len(schools[will].exchange_term) == 1 or student.level in Level.Under.value) \
+                        #             and len(schools[will].exchange_term[0]) == 1:
+                        #         level = schools[will].exchange_term[0][0]
+                        #     elif student.level in Level.Graduate.value \
+                        #             and len(schools[will].exchange_term) > 1 \
+                        #             and len(schools[will].exchange_term[1]) == 1:
+                        #         level = schools[will].exchange_term[1][0]
+                        #     else:
+                        #         level = ""
 
                         # print(len(student.exchange_term), len(schools[will].exchange_term), len(schools[will].exchange_term[0]))
                         # print(student.exchange_term, schools[will].exchange_term, level)
@@ -204,7 +216,7 @@ class interface(Frame):
                             "Level of Study": Level.Under.name if student.level in Level.Under.value else Level.Graduate.name,
                             "Year of Study": student.study_year,
                             "Department": student.department,
-                            "Exchange Term": level,
+                            "Exchange Term": exchange_term,
                             "Assigned School": schools[will].school_code,
                             "Assigned School(Chinese)": schools[will].school_name_chinese,
                             "Remark": ""
