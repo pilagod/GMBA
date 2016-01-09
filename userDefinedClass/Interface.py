@@ -151,9 +151,14 @@ class interface(Frame):
                     #               ((not requirementToeicTest) and (schools[will].toeic[0] is None)) and
                     #               ((not requirementJLPTTest) and (schools[will].jlpt[0] <= -1)))
 
-                    if (not (requirementToeflTest or requirementIeltsTest) and student.other != ""):
+
+                    scoreTests = (requirementToeflTest or requirementIeltsTest) or \
+                                 (((not requirementToeflTest) and (schools[will].toefl[0] is None)) and
+                                  ((not requirementIeltsTest) and (schools[will].ielts[0] is None)))
+
+                    if (not scoreTests and student.other != ""):
                         score_pass_or_not = input(
-                            TextColors.WARNING + "【Serial No】{0.serial_no} 【Student ID】{0.student_id} 【Name】{0.name}, failed at score tests.".format(
+                            TextColors.WARNING + "【Serial No】{0.serial_no} 【Student ID】{0.student_id} 【Name】{0.name} failed at score tests.".format(
                                 student) + TextColors.BOLD + "\n" + \
                             TextColors.FAIL + "This student is " + student.other + ", should he pass score tests?(y/n):" + TextColors.ENDC
                         )
@@ -161,12 +166,7 @@ class interface(Frame):
                             score_pass_or_not = input(TextColors.FAIL + "Enter 'y' or 'n'(y/n):" + TextColors.ENDC)
 
                         if score_pass_or_not in YES_OPTIONS:
-                            requirementToeflTest = True
-                            requirementIeltsTest = True
-
-                    scoreTests = (requirementToeflTest or requirementIeltsTest) or \
-                                 (((not requirementToeflTest) and (schools[will].toefl[0] is None)) and
-                                  ((not requirementIeltsTest) and (schools[will].ielts[0] is None)))
+                            scoreTests = True
 
                     if scoreTests:
 
